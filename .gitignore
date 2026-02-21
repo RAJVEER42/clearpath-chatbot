@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+backend/data/vector_store/
+!backend/data/.gitkeep
+.DS_Store
+node_modules/
+venv/
+.venv/
+*.egg-info/
+dist/
+.next/
+*.tsbuildinfo
