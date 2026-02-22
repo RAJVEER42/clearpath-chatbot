@@ -2,13 +2,13 @@
 
 RAG-powered customer support chatbot for ClearPath project management tool. Built from scratch — no LangChain, LlamaIndex, or managed retrieval services.
 
-**Live Demo:** [https://clearpath-chatbot-928213635181.asia-south1.run.app](https://clearpath-chatbot-928213635181.asia-south1.run.app)
+**🌐 Live Demo:** [https://clearpath-chatbot-928213635181.asia-south1.run.app](https://clearpath-chatbot-928213635181.asia-south1.run.app)
 
 ## How to run locally
 
 ```bash
 # Clone and setup
-git clone <repo-url>
+git clone https://github.com/RAJVEER42/clearpath-chatbot.git
 cd clearpath-chatbot
 
 # Create virtual environment
@@ -49,51 +49,26 @@ npm run build
 # Built files go to frontend/dist/ — FastAPI serves them automatically at http://localhost:8000
 ```
 
-## Docker
+### Docker
 
 ```bash
-# Build
 docker build -t clearpath-chatbot .
-
-# Run
 docker run -p 8000:8000 -e GROQ_API_KEY=your_key_here clearpath-chatbot
 # Open http://localhost:8000
 ```
 
-## Deployment (GCP Cloud Run)
-
-The app is deployed on Google Cloud Run using a multi-stage Docker build.
-
-```bash
-# Build for linux/amd64 (required for Cloud Run)
-docker build --platform linux/amd64 -t clearpath-chatbot-amd64 .
-
-# Tag and push to Artifact Registry
-docker tag clearpath-chatbot-amd64:latest asia-south1-docker.pkg.dev/PROJECT_ID/clearpath-chatbot/app:latest
-docker push asia-south1-docker.pkg.dev/PROJECT_ID/clearpath-chatbot/app:latest
-
-# Deploy
-gcloud run deploy clearpath-chatbot \
-  --image=asia-south1-docker.pkg.dev/PROJECT_ID/clearpath-chatbot/app:latest \
-  --region=asia-south1 \
-  --port=8000 \
-  --memory=2Gi \
-  --cpu=1 \
-  --allow-unauthenticated
-```
-
 ## Models used
 
-- `llama-3.1-8b-instant` — simple queries (greetings, single-fact lookups, short questions)
-- `llama-3.3-70b-versatile` — complex queries (comparisons, complaints, multi-step reasoning)
-
-Both via [Groq](https://console.groq.com).
+| Model | Groq model string | Used for |
+|-------|-------------------|----------|
+| Llama 3.1 8B | `llama-3.1-8b-instant` | Simple queries — greetings, single-fact lookups, yes/no |
+| Llama 3.3 70B | `llama-3.3-70b-versatile` | Complex queries — comparisons, complaints, multi-step reasoning |
 
 ## Environment config
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `GROQ_API_KEY` | Yes | — | API key from Groq console |
+| `GROQ_API_KEY` | Yes | — | API key from [Groq console](https://console.groq.com) |
 | `PORT` | No | `8000` | Backend server port |
 
 ## Architecture
@@ -101,8 +76,8 @@ Both via [Groq](https://console.groq.com).
 Three-layer pipeline:
 
 1. **Hybrid Retrieval Pipeline** — PDFs parsed with PyMuPDF, section-aware chunking (500 tokens, 100 overlap), embedded with `all-MiniLM-L6-v2`, dual retrieval using BM25 keyword search + FAISS semantic search (cosine similarity), results merged via Reciprocal Rank Fusion (RRF), top-k=5 with 0.3 threshold and automatic fallback
-2. **Model Router** — Deterministic rule-based classifier (6 rules: word count, keywords, question marks, complaint markers, compound markers, negation patterns). No LLM calls.
-3. **Output Evaluator** — Three flags: `no_context` (answered without chunks), `refusal` (LLM declined to answer), `conflicting_sources` (chunks from 3+ different documents)
+2. **Model Router** — Deterministic rule-based classifier (6 rules: word count, keywords, question marks, complaint markers, compound markers, negation patterns). No LLM calls. Both models are actually used.
+3. **Output Evaluator** — Three flags: `no_context` (answered without chunks), `refusal` (LLM declined to answer), `conflicting_sources` (chunks from 4+ different documents). Flags surface to the user as a warning banner.
 
 ## Eval harness
 
@@ -113,19 +88,21 @@ python run_eval.py
 # 15/15 passed
 ```
 
-## Bonus challenges
+## Bonus challenges attempted
 
-### ✅ Eval Harness (Attempted)
+### ✅ Eval Harness
 15 hand-written test queries with expected answers in `eval/run_eval.py`. Covers simple lookups, complex multi-part questions, off-topic rejection, complaints, and edge cases. Run with `cd eval && python run_eval.py` — all 15/15 pass.
 
-### ✅ Conversation Memory (Attempted)
-Implemented in `backend/services/memory.py`. Uses in-memory dict keyed by `conversation_id`, preserving last 5 turns per session. Design tradeoff: 5 turns keeps token cost low (~500 extra tokens per request) while still enabling follow-up questions like "tell me more about that." Memory is ephemeral — resets on server restart, which is acceptable for a stateless container deployment.
+### ✅ Conversation Memory
+Implemented in `backend/services/memory.py`. Uses in-memory dict keyed by `conversation_id`, preserving last 5 turns per session. Design tradeoff: 5 turns keeps token cost low (~500 extra tokens per request) while still enabling follow-up questions like "tell me more about that."
 
-### ❌ Streaming (Not Attempted)
-Not implemented. Responses are returned as a complete JSON payload. The main challenge with streaming is that the Output Evaluator (which checks `no_context`, `refusal`, `conflicting_sources` flags) requires the full response text to run its checks — these flags can't be computed mid-stream. A production implementation would stream tokens to the UI while buffering the full response server-side for post-hoc evaluation.
+### ✅ Live Deploy (GCP Cloud Run)
+Deployed on Google Cloud Platform using Cloud Run + Artifact Registry in `asia-south1` (Mumbai). Multi-stage Docker build with linux/amd64 targeting. Public URL with HTTPS, auto-scaling 0→3 instances.
+
+**Live at:** [https://clearpath-chatbot-928213635181.asia-south1.run.app](https://clearpath-chatbot-928213635181.asia-south1.run.app)
 
 ## Known issues
 
 - Embedding model is general-purpose, not fine-tuned for ClearPath domain vocabulary
 - PDF table extraction is lossy — tabular data (pricing matrices, shortcut tables) may not retrieve well
-- Conversation memory is in-memory only, lost on server restart
+- Conversation memory is in-memory only, lost on container restart (see Q4 in Written_answers.md)
