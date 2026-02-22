@@ -115,9 +115,14 @@ python run_eval.py
 
 ## Bonus challenges
 
-- **Conversation memory** — Multi-turn context via `conversation_id`, last 5 turns preserved
-- **Eval harness** — 15 automated test cases covering simple, complex, off-topic, complaints, multi-question, and edge cases
-- **Hybrid retrieval** — BM25 + semantic search with RRF fusion handles typos, short queries, and keyword-heavy questions
+### ✅ Eval Harness (Attempted)
+15 hand-written test queries with expected answers in `eval/run_eval.py`. Covers simple lookups, complex multi-part questions, off-topic rejection, complaints, and edge cases. Run with `cd eval && python run_eval.py` — all 15/15 pass.
+
+### ✅ Conversation Memory (Attempted)
+Implemented in `backend/services/memory.py`. Uses in-memory dict keyed by `conversation_id`, preserving last 5 turns per session. Design tradeoff: 5 turns keeps token cost low (~500 extra tokens per request) while still enabling follow-up questions like "tell me more about that." Memory is ephemeral — resets on server restart, which is acceptable for a stateless container deployment.
+
+### ❌ Streaming (Not Attempted)
+Not implemented. Responses are returned as a complete JSON payload. The main challenge with streaming is that the Output Evaluator (which checks `no_context`, `refusal`, `conflicting_sources` flags) requires the full response text to run its checks — these flags can't be computed mid-stream. A production implementation would stream tokens to the UI while buffering the full response server-side for post-hoc evaluation.
 
 ## Known issues
 
