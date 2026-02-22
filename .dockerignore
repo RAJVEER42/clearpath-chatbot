@@ -1,0 +1,14 @@
+.git
+.env
+.venv
+venv
+__pycache__
+*.pyc
+node_modules
+frontend/dist
+backend/data/vector_store
+.DS_Store
+*.egg-info
+.next
+*.tsbuildinfo
+.gemini
