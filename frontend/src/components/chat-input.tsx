@@ -1,100 +1,102 @@
-import { useEffect, useRef, useState } from "react";
-import useEnterSubmit from "../hooks/use-enter-submit";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "../lib/utils";
 import Icons from "./icons";
+import { motion } from "framer-motion";
 
 interface Props {
-  isLoading: boolean;
   onSend: (message: string) => void;
-  onInputChange?: (value: string) => void;
+  isLoading: boolean;
   externalInput?: string;
 }
 
-const ChatInput = ({
-  isLoading,
-  onSend,
-  onInputChange,
-  externalInput,
-}: Props) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { formRef, onKeyDown } = useEnterSubmit();
+const ChatInput = ({ onSend, isLoading, externalInput }: Props) => {
   const [input, setInput] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (externalInput !== undefined && externalInput !== input) {
+    if (externalInput) {
       setInput(externalInput);
     }
   }, [externalInput]);
 
-  useEffect(() => {
+  const handleChange = (val: string) => {
+    setInput(val);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.style.height = `${Math.min(
+        textareaRef.current.scrollHeight,
+        250
+      )}px`;
     }
-  }, [input]);
+  };
 
-  useEffect(() => {
-    textareaRef.current?.focus();
-  }, []);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim() && !isLoading) {
+      onSend(input);
+      setInput("");
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
+    }
+  };
 
-  const handleChange = (value: string) => {
-    setInput(value);
-    onInputChange?.(value);
+  const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
   };
 
   return (
-    <div className="fixed bottom-0 inset-x-0 mx-auto z-50 pb-5 px-4">
-      <div className="mx-auto max-w-3xl">
-        <form
-          ref={formRef}
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (isLoading) return;
-            const trimmed = input.trim();
-            if (!trimmed) return;
-            onSend(trimmed);
-            setInput("");
-          }}
+    <div className="absolute bottom-0 inset-x-0 w-full bg-gradient-to-t from-background via-background/80 to-transparent pt-10 pb-8 z-20">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full relative">
+        <motion.form
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.2 }}
+          onSubmit={handleSubmit}
           className="relative w-full"
         >
-          <div className="input-glow-wrapper">
-            <div className="relative w-full rounded-[1.25rem] p-1 flex flex-col z-10">
-              <div className="relative flex flex-col justify-center flex-1 min-w-0">
-                <textarea
-                  rows={1}
-                  tabIndex={0}
-                  value={input}
-                  autoFocus
-                  ref={textareaRef}
-                  disabled={isLoading}
-                  onKeyDown={onKeyDown}
-                  onChange={(e) => handleChange(e.target.value)}
-                  placeholder="Ask about ClearPath..."
-                  className={cn(
-                    "h-auto pl-5 pr-14 py-4 overflow-y-auto bg-transparent border-0 resize-none text-left focus:outline-none min-h-[3.5rem] max-h-52 w-full text-[15px] placeholder:text-[oklch(0.5_0.01_270)]",
-                    isLoading && "opacity-50 cursor-not-allowed"
-                  )}
-                />
-              </div>
+          {/* Animated RGB edge lighting wrapper */}
+          <div className="rgb-edge p-[1px] shadow-glass-dark dark:shadow-[0_0_40px_-15px_rgba(255,255,255,0.1)]">
+            <div className="rgb-core relative flex items-end">
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onKeyDown={onKeyDown}
+                onChange={(e) => handleChange(e.target.value)}
+                placeholder="Ask about ClearPath..."
+                className={cn(
+                  "w-full bg-transparent resize-none outline-none border-0 m-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+                  "pl-6 pr-14 py-[1.125rem] min-h-[56px] max-h-52 overflow-y-auto rounded-full font-medium text-[15.5px]",
+                  "text-foreground placeholder:text-muted-foreground/60 focus:placeholder:text-muted-foreground",
+                  isLoading && "opacity-50 cursor-not-allowed"
+                )}
+                rows={1}
+                disabled={isLoading}
+              />
 
-              {/* Send button */}
-              <div className="absolute right-3 bottom-3 z-20">
-                <button
+              {/* Advanced Magnetic Send Button */}
+              <div className="absolute right-2 bottom-2">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="submit"
                   disabled={isLoading || !input.trim()}
                   className={cn(
-                    "flex items-center justify-center size-10 rounded-xl transition-all duration-200 active:scale-90",
+                    "flex items-center justify-center size-10 rounded-full transition-colors duration-200 z-10 overflow-hidden relative group/send",
                     input.trim() && !isLoading
-                      ? "send-btn-active"
-                      : "bg-[oklch(0.25_0.01_270)] text-[oklch(0.5_0.01_270)]",
-                    "disabled:opacity-40 disabled:cursor-not-allowed"
+                      ? "bg-black/5 dark:bg-white/10 text-foreground hover:bg-black/10 dark:hover:bg-white/20"
+                      : "bg-transparent text-muted-foreground/50",
+                    "disabled:cursor-not-allowed"
                   )}
                 >
                   {isLoading ? (
                     <Icons.loader className="size-4 animate-spin" />
                   ) : (
                     <svg
-                      className="size-4"
+                      className="size-4 ml-0.5 text-foreground/80 group-hover/send:text-foreground transition-colors"
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -102,20 +104,24 @@ const ChatInput = ({
                       <path
                         d="M12 19V5M12 5L5 12M12 5L19 12"
                         stroke="currentColor"
-                        strokeWidth="2.5"
+                        strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                     </svg>
                   )}
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>
-        </form>
-        <p className="text-center text-[11px] text-[oklch(0.45_0.01_270)] mt-2.5">
-          ClearPath Support may make mistakes. Please verify important information.
-        </p>
+        </motion.form>
+
+        {/* Helper footer text */}
+        <div className="text-center mt-3">
+          <p className="text-[12px] text-muted-foreground font-medium tracking-tight">
+            ClearPath Assistant can make mistakes. Verify important information.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
+import { type Metadata, type Source } from "../types";
 import { cn } from "../lib/utils";
-import type { Metadata, Source } from "../types";
+import Icons from "./icons";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
   metadata: Metadata | null;
@@ -8,130 +10,147 @@ interface Props {
   onToggle: () => void;
 }
 
-const DebugPanel = ({ metadata, sources, isOpen }: Props) => {
+const DebugPanel = ({ metadata, sources, isOpen, onToggle }: Props) => {
   return (
-    <div
-      className={cn(
-        "fixed top-0 right-0 h-full w-full lg:w-[25%] debug-panel z-40 transition-transform duration-300 overflow-y-auto",
-        isOpen ? "translate-x-0" : "translate-x-full"
-      )}
-    >
-      <div className="p-4 pt-16">
-        <h3 className="text-sm font-semibold text-[oklch(0.85_0_0)] mb-4">Debug Info</h3>
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Dismiss background */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/20 dark:bg-black/60 backdrop-blur-sm cursor-pointer"
+            onClick={onToggle}
+          />
 
-        {!metadata ? (
-          <p className="text-sm text-[oklch(0.5_0.01_270)]">
-            Send a message to see debug info
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {/* Model */}
-            <DebugItem label="Model">
-              <span
-                className={cn(
-                  "inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium",
-                  metadata.model_used.includes("8b")
-                    ? "bg-[oklch(0.4_0.15_160_/_20%)] text-[oklch(0.75_0.15_160)] border border-[oklch(0.4_0.15_160_/_20%)]"
-                    : "bg-[oklch(0.5_0.18_30_/_20%)] text-[oklch(0.8_0.15_30)] border border-[oklch(0.5_0.18_30_/_20%)]"
-                )}
-              >
-                {metadata.model_used.includes("8b") ? "⚡ Llama 8B" : "🧠 Llama 70B"}
-              </span>
-            </DebugItem>
-
-            {/* Classification */}
-            <DebugItem label="Classification">
-              <span
-                className={cn(
-                  "inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium",
-                  metadata.classification === "simple"
-                    ? "bg-[oklch(0.5_0.15_250_/_20%)] text-[oklch(0.75_0.12_250)] border border-[oklch(0.5_0.15_250_/_20%)]"
-                    : "bg-[oklch(0.5_0.18_300_/_20%)] text-[oklch(0.8_0.15_300)] border border-[oklch(0.5_0.18_300_/_20%)]"
-                )}
-              >
-                {metadata.classification}
-              </span>
-            </DebugItem>
-
-            {/* Tokens */}
-            <DebugItem label="Tokens">
-              <div className="flex gap-3 font-mono text-xs">
-                <span className="px-2 py-1 rounded-md bg-[oklch(1_0_0_/_5%)]">
-                  <span className="text-[oklch(0.5_0.01_270)]">in: </span>
-                  <span className="text-[oklch(0.85_0_0)]">{metadata.tokens.input.toLocaleString()}</span>
-                </span>
-                <span className="px-2 py-1 rounded-md bg-[oklch(1_0_0_/_5%)]">
-                  <span className="text-[oklch(0.5_0.01_270)]">out: </span>
-                  <span className="text-[oklch(0.85_0_0)]">{metadata.tokens.output.toLocaleString()}</span>
-                </span>
+          {/* Right-Side Sliding Drawer */}
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-sm sm:max-w-md bg-white dark:bg-[#16181C] shadow-2xl border-l border-black/5 dark:border-white/10 flex flex-col"
+          >
+            <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center size-10 rounded-xl bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20">
+                  <Icons.panel className="size-5 text-foreground" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold tracking-tight text-foreground">
+                    System Telemetry
+                  </h2>
+                </div>
               </div>
-            </DebugItem>
+              <button
+                onClick={onToggle}
+                className="flex items-center justify-center size-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-foreground transition-colors"
+              >
+                <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
-            {/* Chunks */}
-            <DebugItem label="Chunks Retrieved">
-              <span className="font-mono text-xs text-[oklch(0.85_0_0)]">{metadata.chunks_retrieved}</span>
-            </DebugItem>
-
-            {/* Latency */}
-            <DebugItem label="Latency">
-              <span className="font-mono text-xs text-[oklch(0.85_0_0)]">{metadata.latency_ms}ms</span>
-            </DebugItem>
-
-            {/* Evaluator Flags */}
-            <DebugItem label="Evaluator Flags">
-              {metadata.evaluator_flags.length === 0 ? (
-                <span className="text-xs text-[oklch(0.5_0.01_270)]">✓ None</span>
-              ) : (
-                <div className="flex flex-wrap gap-1.5">
-                  {metadata.evaluator_flags.map((flag) => (
-                    <span
-                      key={flag}
-                      className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-[oklch(0.5_0.2_25_/_20%)] text-[oklch(0.8_0.15_25)] border border-[oklch(0.5_0.2_25_/_20%)]"
-                    >
-                      ⚠ {flag}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Routing Logic Card */}
+              <div className="bg-muted/50 rounded-3xl p-5 border border-black/5 dark:border-white/10">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                  Routing Logic
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center pb-2 border-b border-black/5 dark:border-white/10 border-dashed">
+                    <span className="text-[13px] text-foreground/80">Strategy Name</span>
+                    <span className="text-[13px] font-mono bg-primary/10 text-primary px-2 py-0.5 rounded-md">
+                      {"Vector + LLM"}
                     </span>
-                  ))}
+                  </div>
+                  <div className="flex justify-between items-center pb-2 border-b border-black/5 dark:border-white/10 border-dashed">
+                    <span className="text-[13px] text-foreground/80">LLM Model</span>
+                    <span className="text-[13px] font-mono text-foreground font-medium">
+                      {metadata?.model_used || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[13px] text-foreground/80">Total Latency</span>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      <span className="text-[13px] font-mono text-foreground font-medium">
+                        {metadata?.latency_ms ? `${metadata.latency_ms.toFixed(0)} ms` : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Retrieval Stats Card */}
+              <div className="bg-muted/50 rounded-3xl p-5 border border-black/5 dark:border-white/10">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                  Vector Retrieval
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center pb-2 border-b border-black/5 dark:border-white/10 border-dashed">
+                    <span className="text-[13px] text-foreground/80">Chunks Searched</span>
+                    <span className="text-[13px] font-mono text-foreground font-medium">
+                      {metadata?.chunks_retrieved ?? "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center pb-2 border-b border-black/5 dark:border-white/10 border-dashed">
+                    <span className="text-[13px] text-foreground/80">Query Type</span>
+                    <span className="text-[13px] font-mono text-foreground font-medium">
+                      {metadata?.classification ?? "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[13px] text-foreground/80">Sources Used</span>
+                    <span className="text-[13px] font-mono text-blue-600 dark:text-blue-400 font-bold">
+                      {sources?.length || 0}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sub-documents / Sources */}
+              {sources && sources.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 pl-1">
+                    Reference Context ({sources.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {sources.map((src, i) => (
+                      <div
+                        key={i}
+                        className="group relative overflow-hidden bg-muted/40 rounded-2xl p-4 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/20 transition-colors"
+                      >
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-black/20 dark:bg-white/20" />
+                        <div className="flex flex-col gap-2 pl-2">
+                          <div className="flex items-center gap-2">
+                            <Icons.document className="size-4 text-foreground shrink-0" />
+                            <span className="text-[11px] font-mono font-medium text-foreground truncate">
+                              {src.document?.split("/").pop() || "Unknown Source"}
+                            </span>
+                          </div>
+                          <div className="flex gap-2">
+                            <span className="px-1.5 py-0.5 rounded border border-black/5 dark:border-white/10 bg-white dark:bg-white/5 text-[9px] font-mono text-muted-foreground">
+                              Page {src.page ?? 1}
+                            </span>
+                            <span className="px-1.5 py-0.5 rounded border border-black/5 dark:border-white/10 bg-white dark:bg-white/5 text-[9px] font-mono text-muted-foreground">
+                              Score {src.relevance_score ? src.relevance_score.toFixed(3) : "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
-            </DebugItem>
-
-            {/* Sources */}
-            {sources.length > 0 && (
-              <div>
-                <p className="text-xs font-medium text-[oklch(0.5_0.01_270)] mb-2">
-                  Sources
-                </p>
-                <div className="space-y-1.5">
-                  {sources.map((src, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between text-xs p-2.5 rounded-lg bg-[oklch(1_0_0_/_3%)] border border-[oklch(1_0_0_/_5%)]"
-                    >
-                      <span className="truncate mr-2 font-mono text-[oklch(0.8_0_0)]">{src.document}</span>
-                      {src.relevance_score != null && (
-                        <span className="text-[oklch(0.5_0.01_270)] shrink-0">
-                          {(src.relevance_score * 100).toFixed(0)}%
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
-
-function DebugItem({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <p className="text-xs font-medium text-[oklch(0.5_0.01_270)] mb-1.5">{label}</p>
-      {children}
-    </div>
-  );
-}
 
 export default DebugPanel;

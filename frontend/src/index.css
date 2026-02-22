@@ -1,76 +1,80 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=SF+Pro+Display:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(0.13 0.005 270);
-  --foreground: oklch(0.95 0 0);
-  --card: oklch(0.17 0.005 270);
-  --card-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.7 0.15 270);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.22 0.01 270);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.2 0.005 270);
-  --muted-foreground: oklch(0.6 0.01 270);
-  --accent: oklch(0.22 0.01 270);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.7 0.15 270);
+@layer base {
+  :root {
+    /* Minimalist Light Mode (X/GPT style) */
+    --background: #FFFFFF;
+    --foreground: #0F1419;
 
-  /* Glow colors */
-  --glow-1: oklch(0.65 0.2 30);
-  --glow-2: oklch(0.6 0.22 300);
-  --glow-3: oklch(0.55 0.2 260);
+    /* Glassmorphism primitives */
+    --glass: rgba(255, 255, 255, 0.85);
+    --glass-hover: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(0, 0, 0, 0.08);
+
+    /* Semantic */
+    --primary: #0F1419;
+    --primary-foreground: #FFFFFF;
+
+    --muted: #F7F9F9;
+    --muted-foreground: #536471;
+
+    --accent: #EFF3F4;
+    --accent-foreground: #0F1419;
+
+    --border: #EFF3F4;
+    --ring: rgba(15, 20, 25, 0.2);
+  }
+
+  .dark {
+    /* Pure Black Dark Mode (X/GPT style) */
+    --background: #000000;
+    --foreground: #E7E9EA;
+
+    /* Glassmorphism primitives (dark) */
+    --glass: rgba(0, 0, 0, 0.6);
+    --glass-hover: rgba(20, 20, 20, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.12);
+
+    /* Semantic */
+    --primary: #FFFFFF;
+    --primary-foreground: #000000;
+
+    --muted: #16181C;
+    --muted-foreground: #71767B;
+
+    --accent: #1D1F23;
+    --accent-foreground: #E7E9EA;
+
+    --border: #2F3336;
+    --ring: rgba(255, 255, 255, 0.2);
+  }
 }
 
-.dark {
-  --background: oklch(0.13 0.005 270);
-  --foreground: oklch(0.95 0 0);
-  --card: oklch(0.17 0.005 270);
-  --card-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.7 0.15 270);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.22 0.01 270);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.2 0.005 270);
-  --muted-foreground: oklch(0.6 0.01 270);
-  --accent: oklch(0.22 0.01 270);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.7 0.15 270);
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground tracking-tight antialiased selection:bg-primary selection:text-primary-foreground;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+  }
 }
 
-* {
-  border-color: var(--border);
-}
-
-body {
-  margin: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: var(--background);
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code,
-pre,
-.font-mono {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-}
-
+/* Custom Scrollbar for a premium feel */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-  border-radius: 99px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -78,210 +82,120 @@ pre,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(1 0 0 / 10%);
+  background: var(--border);
   border-radius: 99px;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
 }
 
-/* ── Animations ── */
+/* ── Typography & Markdown ── */
+.prose {
+  @apply leading-relaxed;
+}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    filter: blur(10px);
-    transform: translateY(10px);
-  }
+.prose p {
+  @apply mb-4 last:mb-0;
+}
 
+.prose strong {
+  @apply font-semibold;
+}
+
+.prose ul {
+  @apply list-disc pl-5 mb-4 space-y-1;
+}
+
+.prose ol {
+  @apply list-decimal pl-5 mb-4 space-y-1;
+}
+
+.prose a {
+  @apply text-blue-500 hover:text-blue-600 underline underline-offset-2 transition-colors;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  @apply font-semibold tracking-tight mt-6 mb-3;
+}
+
+.prose code {
+  @apply bg-muted text-foreground px-1.5 py-0.5 rounded-md font-mono text-sm border border-border;
+}
+
+.prose pre {
+  @apply bg-muted rounded-xl p-4 overflow-x-auto my-4 border border-border;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 border-0 text-[13px];
+}
+
+/* ── Glass Utilities ── */
+.glass-panel {
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-panel-heavy {
+  background: var(--glass);
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  border: 1px solid var(--glass-border);
+}
+
+/* ── Conic Gradient Border (Emergent RGB Effect) ── */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin-gradient {
   to {
-    opacity: 1;
-    filter: blur(0px);
-    transform: translateY(0);
+    --angle: 360deg;
   }
 }
 
-.animate-blur-in {
-  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes pulseSlow {
-
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.7;
-    transform: scale(1.03);
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulseSlow 3s ease-in-out infinite;
-}
-
-@keyframes pump {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-
-  50% {
-    transform: scale(1.4);
-    opacity: 1;
-  }
-}
-
-.animate-pump {
-  animation: pump 1.2s ease-in-out infinite;
-}
-
-/* ── Glow input bar ── */
-
-@keyframes glowRotate {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.input-glow-wrapper {
+.rgb-edge {
   position: relative;
-  border-radius: 1.25rem;
+  border-radius: 9999px;
   isolation: isolate;
+  background: var(--background);
+  /* Fallback */
 }
 
-.input-glow-wrapper::before {
-  content: '';
+.rgb-edge::before {
+  content: "";
   position: absolute;
-  inset: -2px;
-  border-radius: 1.35rem;
-  background: conic-gradient(from 0deg,
-      var(--glow-1),
-      var(--glow-2),
-      var(--glow-3),
-      var(--glow-1));
-  animation: glowRotate 4s linear infinite;
-  opacity: 0.5;
-  z-index: -2;
-  filter: blur(4px);
-}
-
-.input-glow-wrapper::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 1.25rem;
-  background: oklch(0.15 0.005 270);
+  inset: -1.25px;
+  /* thinner edge */
+  border-radius: inherit;
+  background: conic-gradient(from var(--angle),
+      #3b82f6 0%,
+      #a855f7 33%,
+      #ec4899 66%,
+      #3b82f6 100%);
   z-index: -1;
+  animation: spin-gradient 2s linear infinite;
+  /* faster spinning */
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
-.input-glow-wrapper:focus-within::before {
-  opacity: 0.85;
-  filter: blur(6px);
+.rgb-edge:focus-within::before,
+.rgb-edge:hover::before {
+  opacity: 1;
 }
 
-/* ── Ambient background effects ── */
-
-.ambient-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -10;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.ambient-bg::before {
-  content: '';
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  top: -200px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: radial-gradient(circle, oklch(0.5 0.15 270 / 15%) 0%, transparent 70%);
-  filter: blur(80px);
-}
-
-.ambient-bg::after {
-  content: '';
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  bottom: 10%;
-  right: -100px;
-  background: radial-gradient(circle, oklch(0.5 0.18 30 / 10%) 0%, transparent 70%);
-  filter: blur(80px);
-}
-
-/* ── Prompt cards ── */
-
-.prompt-card {
-  background: oklch(0.18 0.005 270);
-  border: 1px solid oklch(1 0 0 / 6%);
-  border-radius: 1rem;
-  padding: 1rem 1.25rem;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  text-align: left;
-}
-
-.prompt-card:hover {
-  background: oklch(0.22 0.01 270);
-  border-color: oklch(1 0 0 / 12%);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 32px oklch(0 0 0 / 30%);
-}
-
-.prompt-card:active {
-  transform: scale(0.98);
-}
-
-/* ── Send button gradient ── */
-
-.send-btn-active {
-  background: linear-gradient(135deg, oklch(0.55 0.2 270), oklch(0.5 0.22 300));
-  color: white;
-  box-shadow: 0 0 20px oklch(0.55 0.2 270 / 40%);
-}
-
-.send-btn-active:hover {
-  box-shadow: 0 0 28px oklch(0.55 0.2 270 / 55%);
-}
-
-/* ── Header glass ── */
-
-.header-glass {
-  background: oklch(0.13 0.005 270 / 70%);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  border-bottom: 1px solid oklch(1 0 0 / 5%);
-}
-
-/* ── Message styles ── */
-
-.user-message {
-  background: oklch(0.22 0.015 270);
-  border: 1px solid oklch(1 0 0 / 6%);
-  border-radius: 1.125rem;
-  padding: 0.625rem 1rem;
-}
-
-/* ── Debug panel ── */
-
-.debug-panel {
-  background: oklch(0.15 0.005 270 / 95%);
-  backdrop-filter: blur(20px);
-  border-left: 1px solid oklch(1 0 0 / 6%);
+/* A solid core inside the RGB edge to host the text */
+.rgb-core {
+  background: var(--background);
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
 }

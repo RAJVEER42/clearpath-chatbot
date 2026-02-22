@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import Icons from "./icons";
 
 interface Props {
@@ -6,64 +7,90 @@ interface Props {
 
 const PROMPTS = [
   {
-    icon: "💰",
-    title: "What plans does ClearPath offer?",
-    description: "Pricing and feature comparison",
+    icon: "document" as const,
+    title: "Company Policies",
+    description: "Read the employee handbook",
   },
   {
-    icon: "🚀",
-    title: "How do I get started?",
-    description: "Quick setup guide",
+    icon: "rocket" as const,
+    title: "IT Support & Onboarding",
+    description: "Get help with technical setup",
   },
   {
-    icon: "🔗",
-    title: "What integrations are available?",
-    description: "Third-party tool connections",
+    icon: "sparkles" as const,
+    title: "Benefits Overview",
+    description: "What perks are provided?",
   },
   {
-    icon: "📤",
-    title: "How do I export my data?",
-    description: "Data export options",
+    icon: "link" as const,
+    title: "Who's who in the office?",
+    description: "Find an employee contact",
   },
 ];
 
+const ICON_MAP = {
+  document: Icons.document,
+  sparkles: Icons.clearpath,
+  rocket: Icons.rocket,
+  link: Icons.link,
+};
+
 const EmptyState = ({ onSelectPrompt }: Props) => {
   return (
-    <div className="relative flex flex-col items-center justify-end w-full h-full animate-blur-in">
-      <div className="flex flex-col items-center justify-center size-full">
-        <div className="relative w-full flex flex-col items-center justify-center">
-          {/* Animated logo */}
-          <div className="relative flex items-center justify-center mb-6">
-            <div className="absolute w-20 h-20 rounded-full bg-[oklch(0.55_0.2_270_/_15%)] blur-xl animate-pulse-slow" />
-            <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-[oklch(0.2_0.02_270)] border border-[oklch(1_0_0_/_8%)]">
-              <Icons.clearpath className="size-8 text-[oklch(0.75_0.15_270)]" />
-            </div>
-          </div>
+    <div className="relative flex flex-col items-center justify-center w-full h-[80%] max-h-[800px]">
+      <div className="flex flex-col items-center justify-center size-full z-10 px-6">
 
-          <h2 className="text-3xl font-semibold tracking-tight bg-gradient-to-b from-white to-[oklch(0.7_0_0)] bg-clip-text text-transparent">
-            How can I help you today?
+        {/* Animated Hero Text */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full flex flex-col items-center justify-center text-center space-y-4 mb-12"
+        >
+          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+            How can I help?
           </h2>
-          <p className="text-[oklch(0.5_0.01_270)] mt-2 text-[15px]">
-            Ask anything about ClearPath
+          <p className="text-lg text-muted-foreground font-medium max-w-sm">
+            I'm ready to answer any questions about ClearPath.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Prompt cards */}
-        <div className="grid w-full max-w-xl grid-cols-1 gap-2.5 mt-10 mb-6 md:grid-cols-2 px-4">
-          {PROMPTS.map((prompt) => (
-            <button
-              key={prompt.title}
-              onClick={() => onSelectPrompt(prompt.title)}
-              className="prompt-card flex flex-col items-start w-full select-none"
-            >
-              <span className="text-lg mb-1.5">{prompt.icon}</span>
-              <span className="text-[14px] font-medium text-[oklch(0.9_0_0)]">{prompt.title}</span>
-              <span className="text-[12px] text-[oklch(0.5_0.01_270)] mt-0.5">
-                {prompt.description}
-              </span>
-            </button>
-          ))}
-        </div>
+        {/* Premium Floating Prompt Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="grid w-full max-w-2xl grid-cols-1 md:grid-cols-2 gap-3"
+        >
+          {PROMPTS.map((prompt) => {
+            const IconComponent = ICON_MAP[prompt.icon];
+            return (
+              <motion.button
+                key={prompt.title}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onSelectPrompt(prompt.title)}
+                className="group relative overflow-hidden flex items-start gap-4 w-full select-none text-left p-4 rounded-3xl glass-panel hover:glass-panel-heavy transition-all duration-300"
+              >
+                {/* Hover Spotlight Effect (CSS only fake) */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none" />
+
+                <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-muted to-muted/50 border border-border shrink-0 shadow-sm group-hover:shadow-md transition-all duration-300">
+                  <IconComponent className="size-4.5 text-foreground/80 group-hover:text-foreground transition-colors" />
+                </div>
+
+                <div className="flex flex-col items-start pt-0.5">
+                  <span className="text-[15px] font-medium text-foreground tracking-tight group-hover:text-primary transition-colors">
+                    {prompt.title}
+                  </span>
+                  <span className="text-[13px] text-muted-foreground mt-1 line-clamp-1">
+                    {prompt.description}
+                  </span>
+                </div>
+              </motion.button>
+            );
+          })}
+        </motion.div>
       </div>
     </div>
   );
