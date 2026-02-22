@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "Hi there!",
+    "expected_classification": "simple",
+    "expected_answer_contains": [],
+    "expected_flags": [],
+    "description": "Greeting - should use 8B model"
+  },
+  {
+    "id": 2,
+    "query": "How much does the Pro plan cost?",
+    "expected_classification": "simple",
+    "expected_answer_contains": ["49"],
+    "expected_flags": [],
+    "description": "Simple pricing lookup"
+  },
+  {
+    "id": 3,
+    "query": "What is ClearPath?",
+    "expected_classification": "simple",
+    "expected_answer_contains": ["project management"],
+    "expected_flags": [],
+    "description": "Simple product question"
+  },
+  {
+    "id": 4,
+    "query": "How do I create a task?",
+    "expected_classification": "simple",
+    "expected_answer_contains": ["task"],
+    "expected_flags": [],
+    "description": "Simple how-to"
+  },
+  {
+    "id": 5,
+    "query": "What integrations are available?",
+    "expected_classification": "simple",
+    "expected_answer_contains": ["integration"],
+    "expected_flags": [],
+    "description": "Feature lookup"
+  },
+  {
+    "id": 6,
+    "query": "Can I use ClearPath offline?",
+    "expected_classification": "simple",
+    "expected_answer_contains": ["mobile", "offline"],
+    "expected_flags": [],
+    "description": "Yes/no feature question"
+  },
+  {
+    "id": 7,
+    "query": "Compare the Pro and Enterprise plans and explain which is better for a 50-person team",
+    "expected_classification": "complex",
+    "expected_answer_contains": ["enterprise", "pro"],
+    "expected_flags": [],
+    "description": "Multi-doc comparison - should use 70B model"
+  },
+  {
+    "id": 8,
+    "query": "The app is not working and I can't log in. What should I do?",
+    "expected_classification": "complex",
+    "expected_answer_contains": [],
+    "expected_flags": [],
+    "description": "Complaint with troubleshooting"
+  },
+  {
+    "id": 9,
+    "query": "Explain how custom workflows work and how they integrate with the API",
+    "expected_classification": "complex",
+    "expected_answer_contains": ["workflow"],
+    "expected_flags": [],
+    "description": "Complex multi-topic question"
+  },
+  {
+    "id": 10,
+    "query": "What is the SLA for enterprise customers? And what happens if it's breached? How do I file a complaint?",
+    "expected_classification": "complex",
+    "expected_answer_contains": ["sla"],
+    "expected_flags": [],
+    "description": "Multiple questions - 3 question marks"
+  },
+  {
+    "id": 11,
+    "query": "How do I export my data?",
+    "expected_classification": "simple",
+    "expected_answer_contains": ["export", "csv"],
+    "expected_flags": [],
+    "description": "Simple export question"
+  },
+  {
+    "id": 12,
+    "query": "What's the weather today?",
+    "expected_classification": "simple",
+    "expected_answer_contains": [],
+    "expected_flags": ["refusal"],
+    "description": "Off-topic - should get refusal flag"
+  },
+  {
+    "id": 13,
+    "query": "If I upgrade from Free to Pro but then want to downgrade, however I already paid annually, what happens to my data and billing?",
+    "expected_classification": "complex",
+    "expected_answer_contains": [],
+    "expected_flags": [],
+    "description": "Complex conditional query - many compound markers"
+  },
+  {
+    "id": 14,
+    "query": "How much storage do I get?",
+    "expected_classification": "simple",
+    "expected_answer_contains": [],
+    "expected_flags": [],
+    "description": "Simple storage lookup"
+  },
+  {
+    "id": 15,
+    "query": "I don't understand how to set up webhooks and the documentation doesn't work for me. Can you troubleshoot why my webhook isn't firing and explain the retry logic?",
+    "expected_classification": "complex",
+    "expected_answer_contains": ["webhook"],
+    "expected_flags": [],
+    "description": "Complex - negation + troubleshoot + explain + long"
+  }
+]
