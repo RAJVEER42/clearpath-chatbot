@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 
 interface Props {
   message: Message;
+  isLast?: boolean;
 }
 
 const MemoizedReactMarkdown = memo(
@@ -106,11 +107,10 @@ const ChatMessage = ({ message }: Props) => {
             {message.sources.map((source, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 text-muted-foreground hover:text-foreground transition-colors cursor-default"
+                className="flex items-center justify-center px-3 py-1.5 text-[11.5px] font-medium rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition-colors cursor-default"
                 title={`Score: ${source.relevance_score?.toFixed(3) ?? "N/A"}\nPage: ${source.page ?? "N/A"
                   }\nPath: ${source.document || "Unknown"}`}
               >
-                <Icons.document className="size-3" />
                 <span>Doc {idx + 1}</span>
               </div>
             ))}

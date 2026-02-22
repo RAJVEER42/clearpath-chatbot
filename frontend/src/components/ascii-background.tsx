@@ -60,14 +60,16 @@ export const AsciiBackground = () => {
                 const currentY = Math.floor(spore.y);
 
                 if (currentX >= 0 && currentX < cols && currentY >= 0 && currentY < rows) {
-                    grid[currentY][currentX] = spore.char;
+                    if (grid[currentY]) {
+                        grid[currentY][currentX] = spore.char;
+                    }
                 }
             }
 
             // Convert to string
             let gridStr = "";
             for (let y = 0; y < rows; y++) {
-                gridStr += grid[y].join("") + "\n";
+                gridStr += (grid[y]?.join("") || "") + "\n";
             }
 
             setAscii(gridStr);

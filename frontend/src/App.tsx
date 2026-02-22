@@ -148,19 +148,21 @@ function App() {
       </motion.header>
 
       {/* Main content wrapper */}
-      <div className="relative flex-1 size-full pt-20">
+      <div className="relative flex-1 w-full h-full overflow-y-auto no-scrollbar scroll-smooth pt-20 pb-40">
         <ChatPanel
           messages={messages}
           isLoading={isLoading}
           error={error}
           onSelectPrompt={handleSelectPrompt}
         />
-        <ChatInput
-          isLoading={isLoading}
-          onSend={sendMessage}
-          externalInput={pendingPrompt}
-        />
       </div>
+
+      {/* Sticky Bottom Input */}
+      <ChatInput
+        isLoading={isLoading}
+        onSend={sendMessage}
+        externalInput={pendingPrompt}
+      />
 
       {/* Debug panel overlay */}
       <DebugPanel
