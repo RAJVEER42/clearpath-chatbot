@@ -43,22 +43,22 @@ const ChatInput = ({
   };
 
   return (
-    <div className="fixed bottom-0 inset-x-0 mx-auto transition-all duration-300 bg-background z-50">
-      <div className="px-3 text-base pb-4 md:px-5 lg:px-1 xl:px-5">
-        <div className="flex flex-1 gap-4 mx-auto text-base md:gap-5 lg:gap-6 md:max-w-3xl">
-          <form
-            ref={formRef}
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (isLoading) return;
-              const trimmed = input.trim();
-              if (!trimmed) return;
-              onSend(trimmed);
-              setInput("");
-            }}
-            className="relative w-full"
-          >
-            <div className="relative w-full gap-x-1.5 rounded-xl p-1 transition-colors bg-background border border-border/60 overflow-y-auto flex flex-col z-0">
+    <div className="fixed bottom-0 inset-x-0 mx-auto z-50 pb-5 px-4">
+      <div className="mx-auto max-w-3xl">
+        <form
+          ref={formRef}
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (isLoading) return;
+            const trimmed = input.trim();
+            if (!trimmed) return;
+            onSend(trimmed);
+            setInput("");
+          }}
+          className="relative w-full"
+        >
+          <div className="input-glow-wrapper">
+            <div className="relative w-full rounded-[1.25rem] p-1 flex flex-col z-10">
               <div className="relative flex flex-col justify-center flex-1 min-w-0">
                 <textarea
                   rows={1}
@@ -71,23 +71,23 @@ const ChatInput = ({
                   onChange={(e) => handleChange(e.target.value)}
                   placeholder="Ask about ClearPath..."
                   className={cn(
-                    "h-auto pl-4 overflow-y-auto bg-transparent border-0 resize-none text-left focus:outline-none min-h-20 max-h-52 w-full",
+                    "h-auto pl-5 pr-14 py-4 overflow-y-auto bg-transparent border-0 resize-none text-left focus:outline-none min-h-[3.5rem] max-h-52 w-full text-[15px] placeholder:text-[oklch(0.5_0.01_270)]",
                     isLoading && "opacity-50 cursor-not-allowed"
                   )}
                 />
               </div>
 
               {/* Send button */}
-              <div className="absolute right-2 bottom-2 z-20">
+              <div className="absolute right-3 bottom-3 z-20">
                 <button
                   type="submit"
                   disabled={isLoading || !input.trim()}
                   className={cn(
-                    "flex items-center justify-center size-9 rounded-lg transition-all active:scale-90",
+                    "flex items-center justify-center size-10 rounded-xl transition-all duration-200 active:scale-90",
                     input.trim() && !isLoading
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground",
-                    "disabled:opacity-50 disabled:cursor-not-allowed"
+                      ? "send-btn-active"
+                      : "bg-[oklch(0.25_0.01_270)] text-[oklch(0.5_0.01_270)]",
+                    "disabled:opacity-40 disabled:cursor-not-allowed"
                   )}
                 >
                   {isLoading ? (
@@ -102,7 +102,7 @@ const ChatInput = ({
                       <path
                         d="M12 19V5M12 5L5 12M12 5L19 12"
                         stroke="currentColor"
-                        strokeWidth="2"
+                        strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
@@ -111,8 +111,11 @@ const ChatInput = ({
                 </button>
               </div>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
+        <p className="text-center text-[11px] text-[oklch(0.45_0.01_270)] mt-2.5">
+          ClearPath Support may make mistakes. Please verify important information.
+        </p>
       </div>
     </div>
   );

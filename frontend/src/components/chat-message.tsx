@@ -34,13 +34,13 @@ const ChatMessage = ({ message, isLast }: Props) => {
           className={cn(
             "flex flex-col grow",
             isUser &&
-              "bg-muted text-foreground w-max max-w-[80%] ml-auto rounded-lg px-3 py-1.5",
+            "user-message w-max max-w-[80%] ml-auto",
             !isUser && message.content.length <= 90 && "pt-1"
           )}
         >
           {showLoading ? (
-            <div className="flex items-center pt-2.5 animate-pulse">
-              <div className="w-2.5 h-2.5 rounded-full bg-foreground animate-pump" />
+            <div className="flex items-center pt-2.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-[oklch(0.7_0.15_270)] animate-pump" />
             </div>
           ) : isUser ? (
             <div className="whitespace-pre-wrap break-words">{message.content}</div>
@@ -59,7 +59,7 @@ const ChatMessage = ({ message, isLast }: Props) => {
           >
             <button
               onClick={handleCopy}
-              className="flex items-center justify-center size-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="flex items-center justify-center size-8 rounded-lg text-[oklch(0.5_0.01_270)] hover:text-[oklch(0.8_0_0)] hover:bg-[oklch(1_0_0_/_5%)] transition-colors"
             >
               {copied ? (
                 <Icons.check className="size-4" />

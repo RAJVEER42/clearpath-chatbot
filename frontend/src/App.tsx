@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import ChatPanel from "./components/chat-panel";
 import ChatInput from "./components/chat-input";
 import DebugPanel from "./components/debug-panel";
@@ -15,21 +15,9 @@ function App() {
   const [lastMetadata, setLastMetadata] = useState<Metadata | null>(null);
   const [lastSources, setLastSources] = useState<Source[]>([]);
   const [debugOpen, setDebugOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState<string | undefined>(
     undefined
   );
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
-
-  useEffect(() => {
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    setDarkMode(prefersDark);
-  }, []);
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -93,42 +81,31 @@ function App() {
 
   return (
     <div className="flex items-center justify-center w-full relative h-dvh overflow-auto z-0">
-      {/* Gradient background glows */}
-      <div className="fixed -z-10 top-0 left-1/2 -translate-x-1/2 bg-blue-500 rounded-full w-full h-1/6 blur-[10rem] hidden lg:block opacity-10" />
-      <div className="fixed -z-10 top-0 left-1/2 -translate-x-1/2 bg-amber-500 rounded-full w-3/4 h-1/6 blur-[10rem] hidden lg:block opacity-10" />
-      <div className="fixed -z-10 top-[12.5%] left-1/4 -translate-x-1/4 bg-orange-500 rounded-full w-1/3 h-1/6 blur-[10rem] hidden lg:block opacity-20" />
-      <div className="fixed -z-10 top-[12.5%] right-1/4 translate-x-1/4 bg-sky-500 rounded-full w-1/3 h-1/6 blur-[10rem] hidden lg:block opacity-20" />
+      {/* Ambient background */}
+      <div className="ambient-bg" />
 
       {/* Header */}
-      <header className="fixed inset-x-0 top-0 z-50 w-full h-14 bg-background/60 backdrop-blur-md">
+      <header className="fixed inset-x-0 top-0 z-50 w-full h-14 header-glass">
         <div className="flex items-center justify-between w-full h-full px-4 max-w-5xl mx-auto">
-          <div className="flex items-center gap-x-2">
-            <Icons.clearpath className="size-5 text-foreground" />
-            <span className="font-semibold text-sm">ClearPath Support</span>
+          <div className="flex items-center gap-x-2.5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[oklch(0.2_0.02_270)] border border-[oklch(1_0_0_/_8%)]">
+              <Icons.clearpath className="size-4 text-[oklch(0.75_0.15_270)]" />
+            </div>
+            <span className="font-semibold text-sm text-[oklch(0.85_0_0)]">ClearPath Support</span>
           </div>
           <div className="flex items-center gap-x-1">
             <button
               onClick={() => setDebugOpen(!debugOpen)}
-              className="flex items-center justify-center size-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              className="flex items-center justify-center size-9 rounded-lg text-[oklch(0.5_0.01_270)] hover:text-[oklch(0.8_0_0)] hover:bg-[oklch(1_0_0_/_5%)] transition-colors"
               title="Toggle debug panel"
             >
               <Icons.panel className="size-4" />
-            </button>
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="flex items-center justify-center size-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-            >
-              {darkMode ? (
-                <Icons.sun className="size-4" />
-              ) : (
-                <Icons.moon className="size-4" />
-              )}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Chat wrapper — matches Aether's ChatWrapper: relative flex-1 size-full */}
+      {/* Chat wrapper */}
       <div className="relative flex-1 size-full">
         <ChatPanel
           messages={messages}

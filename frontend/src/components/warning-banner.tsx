@@ -14,13 +14,13 @@ const WarningBanner = ({ flags }: Props) => {
   if (flags.length === 0) return null;
 
   return (
-    <div className="flex items-start gap-2 px-3 py-2 mt-2 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-sm">
-      <Icons.warning className="size-4 shrink-0 mt-0.5" />
+    <div className="flex items-start gap-2.5 px-4 py-3 mt-3 rounded-xl bg-[oklch(0.45_0.15_45_/_10%)] border border-[oklch(0.45_0.15_45_/_20%)] text-[oklch(0.8_0.12_45)]">
+      <Icons.warning className="size-4 shrink-0 mt-0.5 text-[oklch(0.7_0.18_45)]" />
       <div>
-        <p className="font-medium">Low confidence — please verify with support.</p>
-        <ul className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+        <p className="font-medium text-sm">Low confidence — please verify with support.</p>
+        <ul className="mt-1 text-xs text-[oklch(0.65_0.1_45)] space-y-0.5">
           {flags.map((flag) => (
-            <li key={flag}>{FLAG_LABELS[flag] ?? flag}</li>
+            <li key={flag}>• {FLAG_LABELS[flag] ?? flag}</li>
           ))}
         </ul>
       </div>
