@@ -172,18 +172,20 @@
 .rgb-edge::before {
   content: "";
   position: absolute;
-  inset: -1.25px;
-  /* thinner edge */
+  inset: -1.5px;
+  /* border width */
   border-radius: inherit;
   background: conic-gradient(from var(--angle),
-      #3b82f6 0%,
-      #a855f7 33%,
-      #ec4899 66%,
-      #3b82f6 100%);
+      transparent 0%,
+      transparent 40%,
+      #ec4899 60%,
+      #8b5cf6 75%,
+      #3b82f6 90%,
+      transparent 100%);
   z-index: -1;
-  animation: spin-gradient 2s linear infinite;
-  /* faster spinning */
-  opacity: 0;
+  animation: spin-gradient 3s linear infinite;
+  opacity: 1;
+  /* Always visible to show the animated border */
   transition: opacity 0.5s ease;
 }
 

@@ -47,10 +47,10 @@ const EmptyState = ({ onSelectPrompt }: Props) => {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="relative w-full flex flex-col items-center justify-center text-center space-y-4 mb-12"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight bg-gradient-to-br from-slate-800 to-sky-600 dark:from-sky-100 dark:to-sky-400 bg-clip-text text-transparent pb-1">
             How can I help?
           </h2>
-          <p className="text-lg text-muted-foreground font-medium max-w-sm">
+          <p className="text-lg text-slate-500 dark:text-slate-300 font-medium max-w-sm">
             I'm ready to answer any questions about ClearPath.
           </p>
         </motion.div>

@@ -70,39 +70,39 @@ const ChatInput = ({ onSend, isLoading, externalInput }: Props) => {
                 className={cn(
                   "w-full bg-transparent resize-none outline-none border-0 m-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
                   "pl-6 pr-14 py-[1.125rem] min-h-[56px] max-h-52 overflow-y-auto rounded-full font-medium text-[15.5px]",
-                  "text-foreground placeholder:text-muted-foreground/60 focus:placeholder:text-muted-foreground",
+                  "text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400",
                   isLoading && "opacity-50 cursor-not-allowed"
                 )}
                 rows={1}
                 disabled={isLoading}
               />
 
-              {/* Advanced Magnetic Send Button */}
-              <div className="absolute right-2 bottom-2">
+              {/* Minimal Send Button */}
+              <div className="absolute right-3 bottom-2.5">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   type="submit"
                   disabled={isLoading || !input.trim()}
                   className={cn(
-                    "flex items-center justify-center size-10 rounded-full transition-colors duration-200 z-10 overflow-hidden relative group/send",
+                    "flex items-center justify-center size-9 rounded-full transition-colors z-10",
                     input.trim() && !isLoading
-                      ? "bg-black/5 dark:bg-white/10 text-foreground hover:bg-black/10 dark:hover:bg-white/20"
-                      : "bg-transparent text-muted-foreground/50",
-                    "disabled:cursor-not-allowed"
+                      ? "text-slate-800 dark:text-slate-200 hover:text-black dark:hover:text-white"
+                      : "text-slate-400 dark:text-slate-600",
+                    "disabled:cursor-not-allowed bg-transparent"
                   )}
                 >
                   {isLoading ? (
-                    <Icons.loader className="size-4 animate-spin" />
+                    <Icons.loader className="size-4 animate-spin text-slate-400" />
                   ) : (
                     <svg
-                      className="size-4 ml-0.5 text-foreground/80 group-hover/send:text-foreground transition-colors"
+                      className="size-[18px]"
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M12 19V5M12 5L5 12M12 5L19 12"
+                        d="M12 5V19M12 5L6 11M12 5L18 11"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
