@@ -20,6 +20,8 @@ const MemoizedReactMarkdown = memo(
 
 const ChatMessage = ({ message }: Props) => {
   const isUser = message.role === "user";
+  const flags = message.evaluator_flags || [];
+  const hasWarning = flags.length > 0;
 
   return (
     <motion.div
@@ -96,26 +98,31 @@ const ChatMessage = ({ message }: Props) => {
           )}
         </div>
 
-        {/* Source Citations with glowing pills */}
-        {!isUser && message.sources && message.sources.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-wrap gap-2 mt-3 ml-2"
-          >
-            {message.sources.map((source, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-center px-3 py-1.5 text-[11.5px] font-medium rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition-colors cursor-default"
-                title={`Score: ${source.relevance_score?.toFixed(3) ?? "N/A"}\nPage: ${source.page ?? "N/A"
-                  }\nPath: ${source.document || "Unknown"}`}
-              >
-                <span>Doc {idx + 1}</span>
+        {/* Evaluator Warnings */}
+        {hasWarning && !isUser && (
+          <div className="flex flex-col gap-1.5 mt-4">
+            {flags.includes("refusal") && (
+              <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-orange-50/90 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-500/40 text-orange-800 dark:text-orange-300 text-[13px] font-semibold shadow-sm shadow-orange-500/5">
+                <Icons.warning className="size-4 flex-shrink-0 text-orange-600 dark:text-orange-400" />
+                <span>I couldn't find a direct answer in the ClearPath documentation.</span>
               </div>
-            ))}
-          </motion.div>
+            )}
+            {flags.includes("no_context") && (
+              <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-yellow-50/90 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-500/40 text-yellow-800 dark:text-yellow-300 text-[13px] font-semibold shadow-sm shadow-yellow-500/5">
+                <Icons.warning className="size-4 flex-shrink-0 text-yellow-600 dark:text-yellow-400" />
+                <span>No relevant documentation was retrieved for this query.</span>
+              </div>
+            )}
+            {flags.includes("conflicting_sources") && (
+              <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-yellow-50/90 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-500/40 text-yellow-800 dark:text-yellow-300 text-[13px] font-semibold shadow-sm shadow-yellow-500/5">
+                <Icons.warning className="size-4 flex-shrink-0 text-yellow-600 dark:text-yellow-400" />
+                <span>Information pulled from multiple distinct sources. May contain contradictions.</span>
+              </div>
+            )}
+          </div>
         )}
+
+
       </div>
 
       {/* User Avatar */}

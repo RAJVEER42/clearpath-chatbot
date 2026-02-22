@@ -24,18 +24,18 @@ const ChatPanel = ({ messages, isLoading, error, onSelectPrompt }: Props) => {
 
   const displayMessages = isLoading
     ? [
-        ...messages,
-        {
-          id: "loading-ai",
-          content: "",
-          role: "assistant" as const,
-          is_loading: true,
-        },
-      ]
+      ...messages,
+      {
+        id: "loading-ai",
+        content: "",
+        role: "assistant" as const,
+        is_loading: true,
+      },
+    ]
     : messages;
 
   return (
-    <div className="relative flex flex-col w-full max-w-3xl pt-16 pb-24 mx-auto h-full">
+    <div className="relative flex flex-col w-full max-w-3xl pt-16 pb-24 mx-auto min-h-full">
       {messages.length === 0 && !isLoading && (
         <EmptyState onSelectPrompt={onSelectPrompt} />
       )}
