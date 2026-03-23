@@ -3,7 +3,7 @@
 RAG-powered customer support chatbot for ClearPath project management tool. Built from scratch — no LangChain, LlamaIndex, or managed retrieval services.
 
 **🌐 Live Demo:** [https://clearpath-chatbot-928213635181.asia-south1.run.app](https://clearpath-chatbot-928213635181.asia-south1.run.app)
-** ❗️❗️NOTE : (due to some problem in my GCP payment, The live link may not work {Thinking of shifting it to DigitalOcean soon...}) 
+### ❗️NOTE : (due to some problem in my GCP payment, The live link may not work {Thinking of shifting it to DigitalOcean soon...}) 
 
 ## How to run locally
 
